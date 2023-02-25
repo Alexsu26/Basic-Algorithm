@@ -135,3 +135,58 @@ for (int i = 0; i < n; i ++)
         cout << a[q[front]] << " ";
 }
 ```
+
+# KMP算法 （还需要再看看）
+s[]为原数组, p[]为匹配字符串, next[]有
+next[i] = j, 表示
+p[1,....,j] = p[i - j + 1,....i] 
+
+# Trie树
+一种能够高效存储和查找字符串集合的数据结构（[详细定义](https://www.acwing.com/solution/content/14695/)）
+```C++
+int son[N][26], cnt[N], idx;
+// 插入字符串
+void insert(char str[])
+{
+    int p = 0;
+    for (int i = 0; str[i]; i ++ )
+    {
+        int u = str[i] - 'a';
+        if (!son[p][u])
+            son[p][u] = ++ idx;
+        p = son[p][u];
+    }
+    cnt[p] ++;
+}
+// 查询字符串
+void query(char str[])
+{
+    int p = 0;
+    for (int i = 0; str[i]; i ++)
+    {
+        int u = str[i] - 'a';
+        if (!son[p][u])
+            return 0;
+        p = son[p][u];
+    }
+    return cnt[p];
+}
+```
+
+# 并查集
+在近乎O(1)的时间内：
+1. 将两个集合合并
+2. 询问两个元素是否在同一个集合内
+基本原理： 每个集合用一棵树表示，树根的编号就是整个集合的编号。每个结点存储他的父节点，p[x]表示x的父节点
+问题1：如何判断树根？ if (p[x] == x)
+问题2：如何求x的集合编号？ while (p[x] != x)    x = p[x];
+问题3：如何合并两个集合？ p[x] = y; // x是根节点
+路径压缩优化： 求x的集合编号时，将整个查询路径上的结点都直接接入根节点
+```C++
+int find(int x)
+{
+    if (p[x] != x)
+        p[x] = find(p[x]);
+    return p[x];
+}
+```
