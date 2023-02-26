@@ -1,10 +1,10 @@
 #include <iostream>
-#include <string>
+#include <algorithm>
 
 using namespace std;
 
 const int N = 1e5 + 10;
-int n;
+int n, m;
 int h[N], hsize;
 int ph[N], hp[N], cnt;
 
@@ -18,9 +18,9 @@ void heap_swap(int a, int b)
 void down(int x)
 {
     int min = x;
-    if (x * 2 <= cnt && h[x * 2] < h[min])
+    if (x * 2 <= hsize  && h[x * 2] < h[min])
         min = x * 2;
-    if (x * 2 + 1 <= cnt && h[x * 2 + 1] < h[min])
+    if (x * 2 + 1 <= hsize && h[x * 2 + 1] < h[min])
         min = x * 2 + 1;
     if (min != x)
     {
@@ -38,15 +38,15 @@ void up(int x)
     }
 }
 
+
 int main()
 {
-    freopen("test.in", "r", stdin);
-    freopen("test.out","w", stdout);
     cin.tie(0);
+    cout.tie(0);
     ios::sync_with_stdio(false);
 
     cin >> n;
-    while (n--)
+    while (n --)
     {
         string s;
         cin >> s;
@@ -57,7 +57,6 @@ int main()
             h[++hsize] = x;
             ph[++cnt] = hsize;
             hp[hsize] = cnt;
-            // 插入最后一个位置，忘了up
             up(hsize);
         }
         else if (s == "PM")
@@ -66,8 +65,7 @@ int main()
         }
         else if (s == "DM")
         {
-            heap_swap(1, hsize);
-            hsize--;
+            heap_swap(1, hsize--);
             down(1);
         }
         else if (s == "D")
@@ -76,8 +74,7 @@ int main()
             cin >> k;
             k = ph[k];
             heap_swap(k, hsize--);
-            down(k);
-            up(k);
+            up(k), down(k);
         }
         else
         {
@@ -85,13 +82,8 @@ int main()
             cin >> k >> x;
             k = ph[k];
             h[k] = x;
-            down(k);
-            up(k);
+            up(k), down(k);
         }
     }
-    for (int i = 1; i <= hsize; i++)
-        cout << h[i] << " ";
-    cout << "\n"
-         << h[hsize];
     return 0;
 }

@@ -190,3 +190,117 @@ int find(int x)
     return p[x];
 }
 ```
+# 堆 （STL可实现123）
+1. 插入一个数 —— heap[++ size] = x; up(size);
+2. 求集合的最小值 -- heap[1];
+3. 删除最小值 -- heap[1] = heap[size --]; down(1);
+4. 删除任意一个元素 -- heap[k] = heap[size --]; down(k); up(k);（只有一个会执行）
+5. 修改任意一个元素 -- heap[k] = x; down(k); up(k);（只有一个会执行）
+heap的两种操作：up() & down()
+## 一般的堆排序
+```C++
+int h[N], hsize;
+void down(int x)
+{
+    int min = x;
+    if (x * 2 <= hsize && h[x * 2] < h[min])
+        min = x * 2;
+    if (x * 2 + 1 <= hsize && h[x * 2 + 1] < h[min])
+        min = x * 2 + 1;
+    if (min != x)
+    {
+        swap(h[min], h[x]);
+        down(min);
+    }
+}
+
+void up(int x)
+{
+    while (x / 2 && h[x / 2] < h[x])
+    {
+        swap(h[x / 2], h[x]);
+        x /= 2;
+    }
+}
+
+// 建堆，O(n)
+for (int i = n / 2; i; i -- )
+    down(i);
+
+// 按序输出最小
+{
+    cout << h[1] << " ";
+    h[1] = h[hsize--];
+    down(1);
+}
+```
+## 需要确定插入顺序
+```C++
+int h[N], hsize;
+int ph[N], hp[N], cnt;
+
+void heap_swap(int a, int b)
+{
+    swap(ph[hp[a]], ph[hp[b]]);
+    swap(hp[a], hp[b]);
+    swap(h[a], h[b]);
+}
+
+void down(int x)
+{
+    int min = x;
+    if (x * 2 <= hsize && h[x * 2] < h[min])
+        min = x * 2;
+    if (x * 2 + 1 <= hsize && h[x * 2 + 1] < h[min])
+        min = x * 2 + 1;
+    if (min != x)
+    {
+        heap_swap(min, x);
+        down(min);
+    }
+}
+
+void up(int x)
+{
+    while(x / 2 && h[x / 2] > h[x])
+    {
+        heap_swap(x / 2, x);
+        x / = 2;
+    }
+}
+
+// 插入x
+{
+    h[++hsize] = x;
+    ph[++cnt] = hsize;
+    hp[hsize] = cnt;
+    up(hsize);          // 别忘了
+}
+
+// 输出最小值
+{
+    cout << h[1] << endl;
+}
+
+// 删除最小值
+{
+    heap_swap(1, hsize--);
+    down(1);
+}
+
+// 删除第k个插入的数
+{
+    k = ph[k];
+    heap_swap(k, hsize--);
+    down(k);
+    up(k);
+}
+
+// 修改第k个插入的数成x
+{
+    k = ph[k];
+    h[k] = x;
+    down(k);
+    up(k);
+}
+```
