@@ -5,14 +5,14 @@
             "name": "C/C++",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileDirname}/${fileBasenameNoExtension}.exe",
+            "program": "${workspaceFolder}/test.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
-            "miDebuggerPath": "E:\\MinGw\\ucrt64\\bin",
+            "miDebuggerPath": "E:\\MinGw\\ucrt64\\bin\\gdb.exe",
             "preLaunchTask": "compile",
             "setupCommands": [
                 {

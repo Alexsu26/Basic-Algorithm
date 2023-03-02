@@ -15,7 +15,7 @@ int bfs()
     queue<pair<int, int>> q;
     q.push({0, 0});
     memset(ck, -1, sizeof ck);
-    ck[0][0] = 1;
+    ck[0][0] = 0;
     int dx[4] = {-1, 0, 1, 0}, dy[4] = {0, 1, 0, -1};
     while (!q.empty())
     {
@@ -25,7 +25,7 @@ int bfs()
         {
             int x = c.first + dx[i];
             int y = c.second + dy[i];
-            if (x >= 0 && y >= 0 && x < n && y < m && g[x][y] == 0 && ck[x][y] != 1)
+            if (x >= 0 && y >= 0 && x < n && y < m && g[x][y] == 0 && ck[x][y] == -1)
             {
                 q.push({x, y});
                 ck[x][y] = ck[c.first][c.second] + 1;
