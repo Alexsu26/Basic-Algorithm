@@ -18,10 +18,81 @@ const int N = 100010, M = 2 * N;
 int h[N], e[M], ne[M], idx;
 memset(h, -1, sizeof h)
 
-void add(int a, int b)
+void add(int a, int b)      // a -> b连一条边
 {
     e[idx] = b;
     ne[idx] = h[a];
-    h[a] = idx ++;
+    h[a] = idx ++; 
+}
+```
+
+# 图的遍历
+## DFS
+```C++
+int h[N], e[2 * N], ne[2 * N], idx;
+bool st[N];
+
+void dfs(int u)
+{
+    st[u] = true;
+    for (int i = h[u]; i != -1; i = ne[i])
+    {
+        int j = e[i];
+        if (!st[j])
+            dfs(j);
+    }
+}
+```
+## BFS
+```C++
+int h[N], e[2 * N], ne[2 * N], idx;
+int d[N];
+
+int bfs()
+{
+    memset(d, -1, sizeof d);
+    queue<int> q;
+    d[1] = 0;
+    q.push(1);
+    while(q.size())
+    {
+        int k = q.front();
+        q.pop();
+        for (int i = h[k]; i != -1; i = ne[i])
+        {
+            int j = e[i];
+            if (d[j] == -1)
+            {
+                q.push(j);
+                d[j] = d[k] + 1;
+            }
+        }
+    }
+    return d[n];
+}
+```
+# 拓扑排序
+有向无环图一定存在拓扑序列
+```C++
+int h[N], e[N], ne[N], idx;
+int q[N], d[N];             // d[N]存储结点的入度
+// 判断有向图是否存在拓扑序列，每次出队只移动hh，最后留在队中的即为拓扑序列
+bool toposort()
+{
+    int hh = 0, tt = -1;
+    for (int i = 1; i <= n; i ++ )
+        if (!d[i])
+            q[++ tt] = i;
+    while (hh <= tt)
+    {
+        int t = q[hh ++];
+        for (int i = h[t]; i != -1; i = ne[i])
+        {
+            int j = e[i];
+            if (--d[j] == 0)
+                q[++ tt] = j;
+        }
+    }
+    return tt == n - 1;         // 若tt == n - 1，则所有结点都入队过一次
 }
 ```
