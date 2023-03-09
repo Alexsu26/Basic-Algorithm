@@ -1,8 +1,8 @@
 # BFS 与 DFS
-||数据结构 |   空间 |   性质 |
-|:--------:|:----------:|:------------:|:--------:|
-|DFS|stack |  $O(h)$  |  不具最短性 |
-|BFS|queue  | $O(2^h)$ | 最短路径 |
+|       | 数据结构 |   空间   |    性质    |
+| :---: | :------: | :------: | :--------: |
+|  DFS  |  stack   |  $O(h)$  | 不具最短性 |
+|  BFS  |  queue   | $O(2^h)$ |  最短路径  |
 
 # 树和图的存储
 树可以看作是无环联通图
@@ -120,8 +120,8 @@ graph LR;
     E --> H
     E --> I
 ```
-# Dijkstra
-## 朴素算法
+## Dijkstra
+### 朴素算法
 > dist[1] = 0, dist[i] = +INF;
 
 > for i : 1 ~ n
@@ -159,3 +159,34 @@ int dijkstra()
         return d[n];
 }
 ```
+### 堆优化版本
+
+## Bellman-Ford算法
+> for n次
+>
+>   备份
+>   for 所有边a -- w --> b
+> 
+>   dist[b] = min(dist[b], backup[a] + w)
+>
+循环完成后，一定有$dist[b] <= dist[a] + w$
+
+如果有负权回路，就没有最短路（每次经过回路路径都减少）
+
+## SPFA算法
+> 大部分正权图也可以用，超时就用dijkstra
+优化Bellman-Ford算法，$dist[b] = min(dist[b], backup[a] + w)$, 只有dist[a]变小了，dist[b]才会变
+
+求负权环时，可以用一个cnt[x]表示1~x的最短路的结点数，当某一次循环中cnt[x] >= n了，则存在负权环
+
+## Floyd算法
+d[i, j]: 邻接矩阵
+
+基于动态规划, d[k, i, j]表示从i开始，经过1-k的结点，到j
+
+d[k, i, j] = d[k - 1, i , k] + d[k - 1, k, j]
+> 
+> for k : 1 ~ n  
+>   for i : 1 ~ n  
+>      for j : 1 ~ n  
+>         d[i, j] = min(d[i, j], d[i, k] + d[k, j])
