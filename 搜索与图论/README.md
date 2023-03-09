@@ -105,11 +105,11 @@ graph LR;
     C[多源汇最短路]
     D[所有边权都是正数]
     E[存在负权边]
-    F[朴素Dijkstra算法, $O(n^2)$]
-    G[堆优化版Dijkstra算法, $O(mlogn)$]
-    H[Bellman-Ford算法, $O(nm)$]
-    I[SPFA算法, $O(m)-> O(nm)$]
-    J[Floyd算法, $O(n^3)$]
+    F[朴素Dijkstra算法, O(n^2)]
+    G[堆优化版Dijkstra算法, O(mlogn)]
+    H[Bellman-Ford算法, O(nm)]
+    I[SPFA算法, O(m)-> O(nm)]
+    J[Floyd算法, O(n^3)]
     A --> B
     A --> C
     B --> D
