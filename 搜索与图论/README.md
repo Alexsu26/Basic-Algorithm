@@ -115,7 +115,7 @@ graph LR;
     B --> D
     B --> E
     C --> J
-    D -- $O(n^2)$ --> F
+    D -- O(n^2) --> F
     D --> G
     E --> H
     E --> I
