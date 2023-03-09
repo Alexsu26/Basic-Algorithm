@@ -96,3 +96,52 @@ bool toposort()
     return tt == n - 1;         // 若tt == n - 1，则所有结点都入队过一次
 }
 ```
+
+# 最短路
+```mermaid
+graph LR;
+    A[最短路]
+    B[单源最短路]
+    C[多源汇最短路]
+    A --> B
+    A --> C
+```
+# Dijkstra
+## 朴素算法
+> dist[1] = 0, dist[i] = +INF;
+
+> for i : 1 ~ n
+>   
+> t <- 不在s当中，距离最近的点（dist最小的点）
+>   
+> s <- t
+>   
+> 用t更新其余点的距离（dist）
+
+```C++
+int g[N][N], d[N];
+bool st[N];
+
+int dijkstra()
+{
+    memset(d, 0x3f, sizeof d);
+    d[1] = 0;
+    for (int i = 0; i < n; i ++)                // 循环n-1次也可以
+    {
+        int t = -1;
+        // 找到未确定最短路的点中距离最短的点
+        for (int j = 1; j <= n; j ++ )         
+            if (!st[j] && (t == -1 || d[t] > d[j]))
+                t = j;
+        // 更新由刚加入的点到其余点的距离，也可加入st的判断
+        for (int j = 1; j <= n; j ++ )
+            d[j] = min(d[j], d[t] + g[t][j]);
+        st[t] = true;
+    }
+    // 判断是否存在最短路
+    if (d[n] == 0x3f3f3f3f)
+        return -1;
+    else
+        return d[n];
+}
+```
