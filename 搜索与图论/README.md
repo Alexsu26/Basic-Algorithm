@@ -350,3 +350,202 @@ for (int i = 1; i <= n; i ++)
 // 判断
 if (d[i][j] > INF / 2)              // 不存在
 ```
+
+# 最小生成树
+```mermaid
+graph LR;
+    A[最小生成树]
+    B[普利姆算法Prim]
+    C[朴素版Prim]
+    D[堆优化版Prim]
+    E[克鲁斯卡尔算法Kruskal]
+    A --> B
+    A --> E
+    B --> C
+    B --> D
+```
+
+## 普利姆算法Prim
+### 朴素版Prim
+```C++
+int g[N][N];
+int dist[N];
+bool st[N];
+
+int prim()
+{
+    memset(dist, 0x3f, sizeof dist);
+    int res = 0;
+    // 循环n次，因为第一次没有指定任何一个点
+    for (int i = 0; i < n; i ++ )
+    {
+        int t = -1;
+
+        // 找到未确定且距离最近的点
+        for (int j = 1; j <= n; j ++)
+            if (!st[j] && (t == -1 || dist[t] > dist[j]))
+                t = j;
+        
+        // 若不是第一个点且dist为无穷，说明图不连通
+        if (i && dist[t] == 0x3f3f3f3f)
+            return 0x3f3f3f3f;
+        
+        // 若不是第一个点，则dist不为正无穷，加入权值
+        if (i) 
+            res += dist[t];
+        st[t] = true;
+        
+        // 以t为起点，更新dist
+        for (int j = 1; j <= n; j ++)
+            dist[j] = min(dist[j], g[t][j]);
+    }
+    return res;
+}
+```
+
+### 堆优化Prim
+基本用不到^ ^
+
+### Kruskal算法
+```C++
+int p[N];
+struct Edge
+{
+    int a, b, w;
+    bool opetator < (const Edge &M)const
+    {
+        return w < M.w;
+    }
+}edges[N];
+
+int find(int x)
+{
+    if (p[x] != x)
+        p[x] = find(p[x]);
+    return p[x];
+}
+
+int kruskal()
+{
+    // 按照权值升序排列edges
+    sort(edges, edges + m);
+
+    // 初始化并查集
+    for (int i = 1; i <= n; i ++ )
+        p[i] = i;
+    
+    // res存权值， cnt存顶点数
+    int res = 0, cnt = 0;
+    for (int i = 0; i < m; i ++)
+    {
+        int a = edges[i].a, b = edges[i].b, w = edges[i].w;
+        a = find(a), b = find(b);
+        // a ！= b说明a、b不在一个集合中，这条边应该加入
+        if (a != b)
+        {
+            p[a] = b;
+            cnt ++;
+            res += w;
+        }
+    }
+
+    // 如果点数不够说明图不连通
+    if (cnt != n - 1)
+        return INF;
+    else
+        return res;
+}
+```
+# 二分图
+```mermaid
+graph LR;
+    A[二分图]
+    B[染色法]
+    C[匈牙利算法]
+    A --> B
+    A --> C
+```
+
+## 染色法
+一个图是二分图，当且仅当图中不含奇数环  
+二分图即顶点集可以划分为两个子集，使得所有边都连接两个子集，而子集内部无边  
+```C++
+const int N, M = 2 * N;
+int h[N], e[M], ne[M], idx;
+int color[N];
+
+bool dfs(int u, int c)
+{
+    // 染色
+    color[u] = c;
+    
+    // 深度遍历u的邻接点
+    for (int i = h[u]; i != -1; i = ne[i])
+    {
+        int j = e[i];
+        if (!color[j])
+        {
+            // 父节点是1，子节点为2； 父节点是2，子节点为1；故使用3 - c
+            if (!dfs(j, 3 - c))
+                return false;
+        }
+
+        // 若父子结点颜色相同，也不行
+        else if (color[j] == c)
+            return false;
+    }
+    return true;
+}
+
+bool flag = true;
+for (int i = 1; i <= n; i ++)
+{
+    if (!color[i])
+    {
+        if (!dfs(i, 1))
+        {
+            flag = false;
+            break;
+        }
+    }
+}
+```
+
+## 匈牙利算法
+求二分图的最大匹配
+```C++
+int h[N], e[M], ne[M], idx;
+
+// match[i] = j表示集合二中i结点在集合一中的连接为j结点
+int match[N];
+
+bool st[N];
+
+bool find(int x)
+{
+    for (int i = h[x]; i != -1; i = ne[i])
+    {
+        int j = e[i];
+        if (!st[j])
+        {
+            st[j] = true;
+            // 若j未匹配或者j匹配的结点可以更换匹配
+            if (match[j] == 0 || find(match[j]))
+            {
+                match[j] = x;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+int res = 0;
+for (int i = 1; i <= n1; i ++ )
+{
+    // 每次都将st重置，否则无法正确找到可以更换的匹配
+    memset(st, false, sizeof st);
+    if (find(i))
+        cnt ++;
+}
+```
