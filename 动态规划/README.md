@@ -18,6 +18,8 @@ graph LR;
     K[集合划分]
     L["不含i的选法"]
     M["含i的选法"]
+    N["f(i-1,j)"]
+    O["f(i-1,j-vi)+wi"]
     A --> B
     A --> C
     B --> D
@@ -29,7 +31,9 @@ graph LR;
     E --> J
     C --> K
     K --> L
+    L --> N
     K --> M
+    M --> O
 ```
 
 # 完全背包
