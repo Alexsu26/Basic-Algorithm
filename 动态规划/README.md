@@ -195,3 +195,53 @@ for (int i = 1; i <= n; i ++)
             if (v[i][k] <= j)
                 f[j] = max(f[j], f[j - v[i][k]] + w[i][k]);
 ```
+
+# 线性Dp
+## 数字三角形
+```mermaid
+graph LR;
+    A["数字三角形"]
+    B["状态表示f(i,j)"]
+    C["状态计算"]
+    D[集合]
+    E[属性]
+    F[从头到第i行第j列的元素的所有选法]
+    J["Max"]     
+    K[集合划分]
+    L["从左上角选(i, j)"]
+    M["从右上角选(i, j)"]
+    N["f(i-1,j-1) + a[i][j]"]
+    O["f(i-1,j) + a[i][j]"]
+    A --> B
+    A --> C
+    B --> D
+    B --> E
+    D --> F
+    E --> J
+    C --> K
+    K --> L
+    L --> N
+    K --> M
+    M --> O
+```
+```C++
+int a[N][N];
+int f[N][N];
+
+// 初始化f，考虑到要取f[i - 1]，则从0开始，j要取到i + 1
+for (int i = 0; i <= n; i ++ )
+    for (int j = 0; j <= i + 1; j ++)
+        f[i][j] = -INF;
+f[1][1] = a[1][1];
+
+// Dp主要部分
+for (int i = 2; i <= n; i++)
+    for (int j = 1; j <= i; j ++)
+        f[i][j] = max(f[i - 1][j - 1] + a[i][j], f[i - 1][j] + a[i][j]);
+
+// 从最后一行中找到最大值
+int res = -INF;
+for (int i = 1; i <= n; i ++)
+    res = max(res, f[n][i]);
+
+```
