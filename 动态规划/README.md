@@ -243,5 +243,168 @@ for (int i = 2; i <= n; i++)
 int res = -INF;
 for (int i = 1; i <= n; i ++)
     res = max(res, f[n][i]);
+```
 
+## 最长上升子序列
+```mermaid
+graph LR;
+    A["最长上升子序列"]
+    B["状态表示f(i)"]
+    C["状态计算"]
+    D[集合]
+    E[属性]
+    F["选到第i个时，前面所有上升子序列的选法"]
+    J["Max"]     
+    K[集合划分]
+    L["倒数第二个序列的位置"]
+    M["0, 1, 2, .... , i - 1"]
+    A --> B
+    A --> C
+    B --> D
+    B --> E
+    D --> F
+    E --> J
+    C --> K
+    K --> L
+    L --> M
+```
+状态计算式为： $f(i) = max(f(k) + 1), k = 0, 1, 2, ... ,i - 1$  
+```C++
+int a[N], f[N];
+
+// 计算
+for (int i = 1; i <= n; i ++)
+{
+    // 初始化，相当于i就是第一个被选到的
+    f[i] = 1;
+    for (int j = 0; j < i; j ++)
+        if (a[j] < a[i])
+            f[i] = max(f[i], f[j] + 1);
+}
+
+// 判断
+int res = 0;
+for (int i = 1; i <= n; i ++)
+    res = max(res, f[i]);
+```
+如果想要打印出子序列是多少，需要一个格外数组记录每个子序列前一位的位置
+```C++
+int a[N], f[N], g[N];
+
+// 计算
+for (int i = 1; i <= n; i ++)
+{
+    f[i] = 1;
+    g[i] = 0;
+    for (int j = 0; j < i; j ++)
+    {
+        if (a[j] < a[i])
+        {
+            if (f[i] < f[j] + 1)
+            {
+                f[i] = f[j] + 1;
+                g[i] = j;
+            }
+        }
+    }
+}
+
+// 倒序打印出最长上升子序列
+int k = 0;
+for (int i = 1; i <= n; i ++)
+    if (f[i] > f[k])
+        k = i;
+
+for (int i = 0, len = f[k]; i < len; i ++)
+{
+    cout << a[k] << " ";
+    k = g[k];
+}
+```
+## 最长公共子序列
+```mermaid
+graph LR;
+    A["最长公共子序列"]
+    B["状态表示f(i, j)"]
+    C["状态计算"]
+    D[集合]
+    E[属性]
+    F["a的前i个，和b的前j个相匹配的公共子序列"]
+    J["Max"]     
+    K[集合划分]
+    L["不选a[i], 不选b[j]"]
+    P["f(i - 1, j - 1)"]
+    M["选a[i], 不选b[j]"]
+    R["f(i, j - 1)"]
+    N["不选a[i], 选b[j]"]
+    S["f(i - 1, j)"]
+    O["选a[i], 选b[j]"]
+    Q["f(i - 1, j - 1) + 1"]
+    A --> B
+    A --> C
+    B --> D
+    B --> E
+    D --> F
+    E --> J
+    C --> K
+    K --> L
+    L --> P
+    K --> M
+    K --> N
+    M --> R
+    N --> S
+    K --> O
+    O --> Q
+```
+对于第二种情况，有 $选a[i], 不选b[j] <= f(i, j - 1) <= f(i, j)$ ,因为 $f(i, j - 1)$ 并不一定选了 $b[j]$ ，但是由于集合取的 $Max$ ，那么可以用 $f(i, j - 1)$ 来代替不方便表示的选法2。  
+实际上，在计算 $f(i, j - 1)$ 和 $f(i - 1, j)$ 时，已经考虑了 $f(i - 1, j - 1)$ 情况，故选法1可以不用单独计算。
+```C++
+for (int i = 1; i <= n; i ++>)
+    for (int j = 1; j <= m; j ++>)
+        if (a[i] == b[j])
+            f[i][j] = max(f[i][j], f[i - 1][j - 1] + 1);
+        else
+            f[i][j] = max(f[i][j - 1], f[i - 1][j]);
+```
+# 区间Dp
+## 石子合并
+```mermaid
+graph LR;
+    A["石子合并"]
+    B["状态表示f(i, j)"]
+    C["状态计算"]
+    D[集合]
+    E[属性]
+    F["合并第i堆到第j堆石子的选法"]
+    J["Min"]     
+    K[集合划分]
+    L["最后一次是哪两堆合并"]
+    M["[i, k]和[k + 1, j]"]
+    N["f(i, j) = min(f(i, k) + f(k + 1, j) + s[j] - s[i - 1])"]
+    A --> B
+    A --> C
+    B --> D
+    B --> E
+    D --> F
+    E --> J
+    C --> K
+    K --> L
+    L --> M
+    M --> N
+```
+
+```C++
+// s存储前缀和
+int a[N], s[N];
+int f[N][N];
+
+// len从2开始，因为区间长度为1时f[i][i] = 0
+for (int len = 2; len <= n; len ++)
+    for (int i = 1; i + len - 1 <= n; i ++)
+    {
+        int j = i + len - 1;                // i表示区间左端点，j表示右端点
+        f[i][j] = INF;                      // f[i][j]要赋初值，否则min求不出来
+        for (int k = i; k < j; k ++)        // k表示划分的位置
+            f[i][j] = min(f[i][j], f[i][k] + f[k + 1][j] + s[j] - s[i - 1]);
+    }
 ```
